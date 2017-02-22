@@ -1,0 +1,24 @@
+[mysqld]
+basedir = /usr/local/mysql57
+datadir = /57data/data
+user = mysql
+port = 3306
+character-set-server = utf8
+collation-server = utf8_general_ci
+server_id = 1
+socket = /tmp/mysql.sock
+gtid_mode = on
+enforce_gtid_consistency = ON
+master_info_repository = TABLE
+relay_log_info_repository = TABLE
+binlog_checksum = NONE
+log_slave_updates = ON
+log_bin = binlog
+binlog_format = ROW
+transaction_write_set_extraction = XXHASH64
+loose-group_replication_group_name = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+loose-group_replication_start_on_boot = off
+loose-group_replication_local_address = 10.0.0.11:33072
+loose-group_replication_group_seeds = "10.0.0.11:33072,10.0.0.13:33072"
+loose-group_replication_bootstrap_group = off
+
