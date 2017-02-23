@@ -21,6 +21,16 @@ deploy_mgr/
 
 ### 运行环境：
 Python3.0或以上版本环境均可。
+需要用到以下几个python模块：
+configparser
+time
+datetime
+paramiko
+os
+pymysql
+logging
+re
+sys
 
 
 ### 执行方法：

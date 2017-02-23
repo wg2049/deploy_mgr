@@ -1,10 +1,7 @@
 #!/usr/bin/env  python3
 # author: wugong
 
-import configparser
-import time
-import datetime
-import paramiko
+
 import os
 import sys
 BASE_DIR= os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
