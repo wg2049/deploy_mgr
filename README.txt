@@ -34,6 +34,7 @@ sys
 
 
 ### 执行方法：
+cd bin/
 python3 run.py
 	
 ### 使用方法：
