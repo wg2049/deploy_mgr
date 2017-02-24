@@ -35,7 +35,6 @@ def ini_db(dbinfo):
     :param dbinfo example:{'port': '3306', 'user': 'mysql', 'ssh_user': 'root', 'ipaddr': '10.0.0.11', 'ssh_password': 'freedom', 'datadir': '/57data/data', 'cnf': 'C:\\0000\\inimgr\\tmp\\node1my.cnf201702211450', 'basedir': '/usr/local/mysql57'}
     setup the database db file and option file.
     '''
-    print(dbinfo)
     t = paramiko.Transport(dbinfo["ipaddr"], 22)
     t.connect(username=dbinfo["ssh_user"], password=dbinfo["ssh_password"])
     sftp = paramiko.SFTPClient.from_transport(t)
@@ -64,8 +63,18 @@ def start_instance(dbinfo):   ##startup mysql instance 启动实例
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     ssh.connect(dbinfo["ipaddr"], 22, dbinfo["ssh_user"], dbinfo["ssh_password"])
     ssh.exec_command(CMD)
-    logger.info("The instance on "+ dbinfo["ipaddr"]+" port: "+dbinfo["port"]+" started.")
-    #print("The instance on "+ dbinfo["ipaddr"]+" port: "+dbinfo["port"]+" started.")
+
+    USER = "root"
+    PASS = "mysql"
+    while True:
+        try:
+            mysqlcon = pymysql.connect(user=USER, password=PASS, host=dbinfo["ipaddr"], port=int(dbinfo["port"]))
+            mysqlcon.close()
+            logger.info("The instance on " + dbinfo["ipaddr"] + " port: " + dbinfo["port"] + " started.")
+            break
+        except Exception:
+            print("Waiting for the database startup. Please wait ...")
+
     return 1
 
 def start_up_mgr(dbinfo,mgrinfo,bootstrap_tag):##create user,change master,install plugin,start group_replication
@@ -150,7 +159,7 @@ def run():
             tcnf.read(tmp_cnf)
             tcnf.add_section("mysqld")
             for j in mgrconf[i]:
-                if j not in ("ipaddr", "ssh_user", "ssh_password"):
+                if j not in ("ipaddr", "ssh_user", "ssh_password","mgr_port"):
                     tcnf["mysqld"][j] = mgrconf[i][j]
             tcnf['mysqld']['gtid_mode'] = 'on'
             tcnf['mysqld']['enforce_gtid_consistency'] = 'ON'
@@ -163,7 +172,7 @@ def run():
             tcnf['mysqld']['transaction_write_set_extraction'] = "XXHASH64"
             tcnf['mysqld']['loose-group_replication_group_name'] = mgrconf['mgr']['loose-group_replication_group_name']
             tcnf['mysqld']['loose-group_replication_start_on_boot'] = "off"
-            tcnf['mysqld']['loose-group_replication_local_address'] = mgrconf[i]["ipaddr"] + ":" + mgrconf['mgr'][
+            tcnf['mysqld']['loose-group_replication_local_address'] = mgrconf[i]["ipaddr"] + ":" + mgrconf[i][
                 'mgr_port']
             tcnf['mysqld']['loose-group_replication_group_seeds'] = mgrconf['mgr'][
                 'loose-group_replication_group_seeds']
@@ -186,7 +195,7 @@ def run():
 
             ini_db(dbinf)
             start_instance(dbinf)
-            time.sleep(2)
+
             start_up_mgr(dbinf, mgrinf, bootstrap_tag)
             if bootstrap_tag == 1:
                 renameinfo=dbinf
