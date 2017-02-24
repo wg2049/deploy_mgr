@@ -14,6 +14,8 @@ deploy_mgr/
 |-- conf/
 |   |-- ini_mgr.conf   		  ##deploy_mgr配置文件
 |   |-- example_ini_mgr.conf  ##参考配置文件
+|-- tmp/
+|   |-- __init__.py
 |-- db_data.tar.gz    ##一个MySQL数据库datadir压缩包，可替换。数据库目录名为"db_data"。库中用户'root'@'%'密码为'mysql'，程序最后会将该用户rename为'root'@'localhost'.
 |-- README.txt
 
