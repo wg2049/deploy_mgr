@@ -103,7 +103,10 @@ def start_up_mgr(dbinfo,mgrinfo,bootstrap_tag):##create user,change master,insta
     cur.execute("INSTALL PLUGIN group_replication SONAME 'group_replication.so'")
     if bootstrap_tag == 1:
         cur.execute("SET GLOBAL group_replication_bootstrap_group=ON ")
+    else:
+        cur.execute("SET global group_replication_allow_local_disjoint_gtids_join=ON")
     cur.execute("START GROUP_REPLICATION")
+    cur.execute("SET GLOBAL group_replication_bootstrap_group=off")
     cur.execute("SET GLOBAL group_replication_bootstrap_group=off")
     cur.close()
     mysqlcon.close()
